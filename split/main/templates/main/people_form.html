@@ -1,0 +1,13 @@
+{% extends 'main/base.html' %}
+{% block title %}
+Создание людей
+{% endblock %}
+
+{% block body %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+<button type="submit"> Создать</button>
+</form>
+{% endblock %}
+

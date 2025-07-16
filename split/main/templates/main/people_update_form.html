@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+{% block title %}
+Изменить данные друга
+{% endblock %}
+
+{% block body %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+<button type="submit"> Обновить данные</button>
+</form>
+
+<div> Перейти на <a href="{% url 'main:cost_view' pk=object.cost.pk%}"> расходы {{object.cost.pk}} </a></div>
+
+
+{% endblock %}

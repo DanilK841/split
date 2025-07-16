@@ -1,0 +1,14 @@
+{% extends 'main/base.html' %}
+{% block title %}
+Удаление
+{% endblock %}
+
+{% block body %}
+<h1>Уверены что хотите удалить?</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+<button type="submit"> Удалить</button>
+</form>
+{% endblock %}
+

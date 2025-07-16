@@ -1,0 +1,68 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Расходы
+{% endblock %}
+
+{% block body %}
+<h1> Детализация расходов {{cost.pk}} {{cost.name}}</h1>
+
+<div>
+
+
+    <ul>    
+    {% for costd in cost.costdetail.all %}
+    <li> {{costd.name}} - {{costd.price}}
+        <a href="{% url 'main:cost_detail' pk=costd.pk%}">{{costd.people_cost.name}}</a>
+        ({% for share in costd.people_share.all  %} {{share.name}} {% endfor %})
+        <a href="{% url 'main:update_cost_detail' pk=costd.pk%}"> Редактировать </a>
+        <a href="{% url 'main:cost_detail_delete' pk=costd.pk %}"> Удалить </a>
+    </li>
+    {% endfor %}
+    </ul>
+</div>
+
+<div>
+    <a href="{% url 'main:cost_detail_create' pk=cost.pk %}"> Добавить расход </a>
+    Проверка работы контекста {{result.egor}}
+</div>
+
+<div>
+    <h2> Люди </h2>
+    <ul>
+    {% for people in peoples %}
+    <li> {{people.name}}
+        <a href="{% url 'main:people_update' pk=people.pk %}"> Изменить </a>
+        <a href="{% url 'main:people_delete' pk=people.pk %}"> Удалить </a>  </li>
+    {% endfor %}
+    </ul>
+    <a href="{% url 'main:people_create_tocost' pk=cost.pk %}"> Добавить друга </a>
+</div>
+
+<div>
+    <h2>Расчет</h2>
+    <ul>
+        {% for people in result.people_cost %}
+        <li> <b> {{people.people_cost__name}}</b> всего потратил - {{people.total_sum_spent}}</li>
+
+        {% endfor %}
+    </ul>
+
+
+    <h2>Расчет 2</h2>
+    <ul>
+        {% for r in result.res %}
+        <li> {{r.people_cost}}   <b> {{r.price}} </b> / {{r.count}}  =  {{r.spent_for_one}}</li>
+
+        {% for pshare in r.people_share.all %}
+        {{pshare}} {{r.spent_for_one}}
+        {% endfor %}
+
+        {% endfor %}
+    </ul>
+</div>
+
+
+
+{% endblock %}
+
