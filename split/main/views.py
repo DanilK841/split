@@ -96,30 +96,106 @@ class CostView(TemplateView):
         .annotate(
             total_sum_spent=Sum('price')
         ))
-        res = cost_detail.prefetch_related('people_share').values('people_cost','people_share').annotate(
-            count=Count('id'),
-            total_sum_spent=Sum('price'),
-            spent_for_one=(Sum('price')/Count('id')),
+        query = '''SELECT cd.id,
+                    mp1.name as name_cost, 
+                    mp2.name as name_share,
+                    count(cd.id) over (partition by cd.id) as wind_,
+                    cd.price,
+                    cd.price / count(cd.id) over (partition by cd.id) as price_for_one
+                    from main_costdetail cd
+                    left join main_costdetail_people_share cds on cd.id = cds.costdetail_id
+                    join main_people mp1 on cd.people_cost_id = mp1.id
+                    join main_people mp2 on cds.people_id = mp2.id
+                    where cd.cost_id = %d''' % pk
+        res = CostDetail.objects.raw(query)
 
-        )
-        print(res)
         data = {}
-        # for item in res:
-        #     data_ = {item.people_cost.id: {}}
-        #     for itemk in item.people_share.all().values('id'):
-        #         # Добавляем во вложенный словарь
-        #         if itemk['id'] != item.people_cost.id:
-        #             data_[item.people_cost.id][itemk['id']] = item.spent_for_one
-        #
-        #             # print(data_)
-        #             data |= data_
+        for r in res:
+            if r.name_cost != r.name_share:
+                if r.name_cost in data.keys() and r.name_share in data[r.name_cost].keys():
+                    data[r.name_cost][r.name_share] += r.price_for_one
+                elif r.name_cost in data.keys():
+                    data[r.name_cost][r.name_share] = r.price_for_one
+                else:
+                    data[r.name_cost]= {r.name_share:r.price_for_one}
+        print(data)
+        iter = 1
+        while iter == 1:
+            deldic = {}
+            iter = 0
+            for key in data.keys():
+                for k, v in data[key].items():
+                    if k in data.keys() and key in data[k].keys():
+                        iter = 1
+                        if v >= data[k][key]:
+                            data[key][k] = v - data[k][key]
+                            data[k][key] = 0
+                            deldic[k] = key
+                        else:
+                            data[k][key] = data[k][key] - v
+                            data[key][k] = 0
+                            deldic[key] = k
+            for k,v in deldic.items():
+                del data[k][v]
+            deldic = {}
+            print(data)
+            # todo add comment
+            data_ = {}
+            for costkey in data.keys():
+                for sharekey in data[costkey].keys():
+                    print(data)
+                    if sharekey in data.keys() :
+                        for sharekey2 in data[sharekey].keys():
+                                # iter = 1
+                            if data[costkey][sharekey] > 0 and data[sharekey][sharekey2] > 0:
+                                if data[sharekey][sharekey2] >= data[costkey][sharekey]:
+                                    if sharekey2 in data[costkey].keys():
+                                        data[costkey][sharekey2] += data[costkey][sharekey]
+                                    else:
+                                        if costkey in data_.keys() and sharekey2 in data[costkey].keys():
+                                            data_[costkey][sharekey2] += data[costkey][sharekey]
+                                        elif costkey in data_.keys() :
+                                            data_[costkey][sharekey2] = data[sharekey][sharekey2]
+                                        else:
+                                            data_[costkey] = {sharekey2: data[sharekey][sharekey2]}
+
+                                    data[sharekey][sharekey2] -= data[costkey][sharekey]
+                                    data[costkey][sharekey] = 0
+                                    deldic[costkey] = sharekey
+                                else:
+                                    data[costkey][sharekey] -= data[sharekey][sharekey2]
+                                    if sharekey2 in data[costkey].keys():
+                                        data[costkey][sharekey2] += data[sharekey][sharekey2]
+                                    else:
+                                        if costkey in data_.keys() and sharekey2 in data[costkey].keys():
+                                            data_[costkey][sharekey2] += data[sharekey][sharekey2]
+                                        elif costkey in data_.keys() :
+                                            data_[costkey][sharekey2] = data[sharekey][sharekey2]
+                                        else:
+                                            data_[costkey] = {sharekey2: data[sharekey][sharekey2]}
+                                    data[sharekey][sharekey2] = 0
+                                    deldic[sharekey] = sharekey2
+
+
+                    # key in data[k].keys():
+
+            for k,v in deldic.items():
+                del data[k][v]
+            deldic = {}
+            print('data_:', data_)
+            for costkey in data_.keys():
+                for sharekey in data_[costkey].keys():
+                    data[costkey][sharekey] = data_[costkey][sharekey]
+            data_ = {}
+            print('data:', data)
+
 
 
         datatest = {1:{2:200, 3:200}}
 
         return  {'people_cost':people_cost,
                  'res':res,
-                 # 'data':data,
+                 'data':data,
                  }
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

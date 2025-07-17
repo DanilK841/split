@@ -51,12 +51,12 @@
 
     <h2>Расчет 2</h2>
     <ul>
-        {% for r in result.res %}
-        <li> {{r.people_cost}}   <b> {{r.price}} </b> / {{r.count}}  =  {{r.spent_for_one}}</li>
+        {% for k,v in result.data.items %}
+        <li> {{k}}
+            {% for kk, vv in v.items %}
+            <b> {{kk}} - {{vv}} </b> </li>
+            {% endfor %}
 
-        {% for pshare in r.people_share.all %}
-        {{pshare}} {{r.spent_for_one}}
-        {% endfor %}
 
         {% endfor %}
     </ul>
