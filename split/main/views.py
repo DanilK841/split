@@ -56,8 +56,15 @@ class CostDetailDeleteView(DeleteView):
 class PeopleCreateView(CreateView):
     model=People
     fields = 'name', 'telegram'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        peoples = People.objects.filter(cost=context['pk'])
+        context['peoples'] = peoples
+        print('contextcontextcontextcontext',self.kwargs.get('pk'))
+        return context
     def get_success_url(self):
-        return reverse('main:cost_detail_create', kwargs={'pk': self.kwargs.get('pk')})
+        return reverse('main:people_create', kwargs={'pk': self.kwargs.get('pk')})
     def form_valid(self, form):
         # Использование параметра при сохранении формы
         form.instance.cost = get_object_or_404(Cost, pk=self.kwargs.get('pk'))
@@ -66,8 +73,9 @@ class PeopleCreateView(CreateView):
 class PeopleCreateToCostView(CreateView):
     model=People
     fields = 'name', 'telegram'
+
     def get_success_url(self):
-        return reverse('main:cost_view', kwargs={'pk': self.kwargs.get('pk')})
+        return reverse('main:cost_detail_create', kwargs={'pk': self.kwargs.get('pk')})
     def form_valid(self, form):
         # Использование параметра при сохранении формы
         form.instance.cost = get_object_or_404(Cost, pk=self.kwargs.get('pk'))
@@ -96,7 +104,11 @@ class CostView(TemplateView):
         .annotate(
             total_sum_spent=Sum('price')
         ))
-        query = '''SELECT cd.id,
+
+
+        print('pkpkpkpkpk',pk)
+
+        res = CostDetail.objects.raw('''SELECT cd.id,
                     mp1.name as name_cost, 
                     mp2.name as name_share,
                     count(cd.id) over (partition by cd.id) as wind_,
@@ -106,11 +118,11 @@ class CostView(TemplateView):
                     left join main_costdetail_people_share cds on cd.id = cds.costdetail_id
                     join main_people mp1 on cd.people_cost_id = mp1.id
                     join main_people mp2 on cds.people_id = mp2.id
-                    where cd.cost_id = %d''' % pk
-        res = CostDetail.objects.raw(query)
-
+                    where cd.cost_id = %s''', [str(pk).replace('-','')])
+        print(f'where cd.cost_id = %s', [str(pk)])
         data = {}
         for r in res:
+            print('asjkdgakjgdhjkasgdjhagsdhj', r.name_cost)
             if r.name_cost != r.name_share:
                 if r.name_cost in data.keys() and r.name_share in data[r.name_cost].keys():
                     data[r.name_cost][r.name_share] += r.price_for_one
@@ -118,7 +130,7 @@ class CostView(TemplateView):
                     data[r.name_cost][r.name_share] = r.price_for_one
                 else:
                     data[r.name_cost]= {r.name_share:r.price_for_one}
-        print(data)
+        print('datastart start start start', data)
         iter = 1
         while iter == 1:
             deldic = {}
@@ -210,4 +222,5 @@ class CostCreateView(CreateView):
     model=Cost
     fields = ('name',)
     def get_success_url(self):
-        return reverse_lazy('main:people_create', kwargs={'pk': self.kwargs.get('pk')})
+        print('print args', self.kwargs)
+        return reverse_lazy('main:people_create', kwargs={'pk': self.object.pk})

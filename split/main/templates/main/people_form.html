@@ -7,7 +7,17 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-<button type="submit"> Создать</button>
+<button type="submit"> Создать </button>
 </form>
-{% endblock %}
+
+<div>
+    <h2> Список созданных людей </h2>
+    <ul>
+        {% for people in peoples %}
+        <li>{{people.name}}</li>
+        {% endfor %}
+    </ul>
+    <a class="a-link" href="{% url 'main:cost_detail_create' pk=pk %}"> К созданию расходов </a>
+    {% endblock %}
+</div>
 

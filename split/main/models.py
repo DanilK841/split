@@ -1,12 +1,20 @@
 from django.db import models
 from django.db.models import ForeignKey
+import uuid
 
-class Cost(models.Model):
+
+class UUIDModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    class Meta:
+        abstract = True
+
+class Cost(UUIDModel):
     name = models.CharField(max_length=50)
     # people = models.ManyToManyField(People, related_name='cost')
     # cost_detail = models.ManyToManyField(CostDetail, related_name='cost')
 
-class People(models.Model):
+class People(UUIDModel):
 
     name = models.CharField(max_length=30)
     telegram = models.CharField(max_length=70)
@@ -16,7 +24,7 @@ class People(models.Model):
 
 
 
-class CostDetail(models.Model):
+class CostDetail(UUIDModel):
     name = models.CharField(max_length=150, null=False)
     people_cost = models.ForeignKey(People, on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=10,decimal_places=2)

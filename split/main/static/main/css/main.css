@@ -1,0 +1,118 @@
+* {
+        font-family: 'Roboto', sans-serif;
+
+      }
+header {
+    height: 200px;
+    /* background-color: black; */
+    background-color:#f6f7f9;
+}
+header > div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+section{
+    background-color:#f6f7f9;
+}
+footer{
+    height: 300px;
+    background-color:#f6f7f9;
+}
+.base-fixed {
+    max-width: 1200px;
+    background-color:#f6f7f9;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 40px 30px;
+
+}
+.base-fixed h2{
+    padding-bottom: 20px;
+    font-weight: bold;
+}
+.first-block {
+    height: 400px;
+    background-color:#f6f7f9;
+}
+.rowalign {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:flex-start;
+}
+.image-grid{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+.a-link {
+    text-decoration: none;
+    color: black;
+    padding-left: 15px;
+}
+.img-main{
+    background-image: url("image/man/man.png");
+    size: 100px;
+    background-size: 40%;
+    background-position-x: right;
+    background-repeat: no-repeat;
+}
+.img-work{
+    width: 140px;
+    padding-left: 10%;
+}
+.img-example{
+    width: 200px;
+}
+
+.img-icons{
+    width: 10px;
+}
+
+.btn-white {
+    background-color:white;
+    border:solid 1px black;
+    border-radius: 5px;
+    margin:5px;
+    min-height: 2em;}
+
+.btn-white:hover {
+    background-color:#525c707a;
+    border:solid 1px black;
+    border-radius: 5px;
+    margin:5px;
+}
+.blue-block{
+    background-color: #3f2aff;
+    height: 400px;
+}
+.blue-block h2{
+    width: 50%;
+    font-weight: 900;
+    padding-top: 30px;
+    color: white;
+}
+.blue-block p{
+    width:50%;
+    color: white;
+    font-size: small;
+}
+.popup-container{
+    background-color: #00000085;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+.popup-form{
+    background-color: white;
+    width: 300px;
+    height: 300px;
+    padding: 30px;
+    border-radius: 5px;
+}
