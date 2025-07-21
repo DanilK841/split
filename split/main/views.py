@@ -61,7 +61,6 @@ class PeopleCreateView(CreateView):
         context['pk'] = self.kwargs.get('pk')
         peoples = People.objects.filter(cost=context['pk'])
         context['peoples'] = peoples
-        print('contextcontextcontextcontext',self.kwargs.get('pk'))
         return context
     def get_success_url(self):
         return reverse('main:people_create', kwargs={'pk': self.kwargs.get('pk')})
@@ -73,9 +72,14 @@ class PeopleCreateView(CreateView):
 class PeopleCreateToCostView(CreateView):
     model=People
     fields = 'name', 'telegram'
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
+        peoples = People.objects.filter(cost=context['pk'])
+        context['peoples'] = peoples
+        return context
     def get_success_url(self):
-        return reverse('main:cost_detail_create', kwargs={'pk': self.kwargs.get('pk')})
+        return reverse('main:cost_view', kwargs={'pk': self.kwargs.get('pk')})
     def form_valid(self, form):
         # Использование параметра при сохранении формы
         form.instance.cost = get_object_or_404(Cost, pk=self.kwargs.get('pk'))
@@ -104,9 +108,6 @@ class CostView(TemplateView):
         .annotate(
             total_sum_spent=Sum('price')
         ))
-
-
-        print('pkpkpkpkpk',pk)
 
         res = CostDetail.objects.raw('''SELECT cd.id,
                     mp1.name as name_cost, 
@@ -201,13 +202,17 @@ class CostView(TemplateView):
             data_ = {}
             print('data:', data)
 
-
-
-        datatest = {1:{2:200, 3:200}}
-
+        data_n = {}
+        for costkey in data.keys():
+            for sharekey in data[costkey].keys():
+                if sharekey in data_n.keys():
+                    data_n[sharekey][costkey] = data[costkey][sharekey]
+                else:
+                    data_n[sharekey] = {costkey: data[costkey][sharekey]}
+        print(data_n)
         return  {'people_cost':people_cost,
                  'res':res,
-                 'data':data,
+                 'data':data_n,
                  }
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

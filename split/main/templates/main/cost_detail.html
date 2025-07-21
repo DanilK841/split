@@ -7,49 +7,136 @@
 {% block body %}
 
 
-<div class="base-fixed">
-<h1> Детализация расходов {{cost.name}}</h1>
+<body class="bg-light">
+    <div class="container py-4">
+        <!-- Шапка -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <h1 class="h4 mb-3 mb-md-0"> Детализация расходов {{cost.name}} </h1>
+ <div class="d-flex align-items-center">
+                        <span class="badge bg-success bg-opacity-10 text-success fs-6">
+                            <i class="bi bi-wallet2 me-2"></i>Общий бюджет: 15,700.00 ₽
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <ul>    
-    {% for costd in cost.costdetail.all %}
-    <li> {{costd.name}} - {{costd.price}}
-        {{costd.people_cost.name}}
-        ({% for share in costd.people_share.all  %} {{share.name}} {% endfor %})
-        <a class="a-link" href="{% url 'main:update_cost_detail' pk=costd.pk%}"> Редактировать </a>
-        <a class="a-link" href="{% url 'main:cost_detail_delete' pk=costd.pk %}"> Удалить </a>
-    </li>
-    {% endfor %}
-    </ul>
-        <a class="a-link" href="{% url 'main:cost_detail_create' pk=cost.pk %}"> Добавить расход </a>
-    Проверка работы контекста {{result.egor}}
-</div>
+        <div class="row">
+            <!-- Основные расходы -->
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="h5 mb-0"><i class="bi bi-receipt me-2"></i>Основные расходы</h2>
+                            <a href="{% url 'main:cost_detail_create' pk=cost.pk %}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-lg me-1"></i>Добавить расход
+                            </a>
+                        </div>
+<div class="list-group">
+        {% for costd in cost.costdetail.all %}
+                            <div class="list-group-item expense-card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{costd.name}} : {{costd.people_cost.name}}
+                                            <span class="badge bg-success bg-opacity-10 text-success fs-6">
+                                             <i class="bi bi-wallet2 me-2"></i>{{costd.price}} ₽  </span></h6>
+                                        <small class="text-muted">Трата разделена между - {% for share in costd.people_share.all  %} {{share.name}} {% endfor %}</small>
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'main:update_cost_detail' pk=costd.pk%}" class="btn btn-outline-secondary btn-sm me-1" title="Распределить">
+                                            <i class="bi bi-arrow-left-right"></i>
+                                        </a>
+                                        <a href="{% url 'main:cost_detail_delete' pk=costd.pk %}" class="btn btn-outline-danger btn-sm" title="Удалить">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Другие расходы можно добавить здесь -->
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Участники -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="h5 mb-0"><i class="bi bi-people me-2"></i>Участники</h2>
+                            <a href="{% url 'main:people_create_tocost' pk=cost.pk %}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-lg me-1"></i>Добавить
+                            </a>
+                        </div>
 
 
-<div class="base-fixed">
-    <h2> Люди </h2>
-    <ul>
-    {% for people in peoples %}
-    <li> {{people.name}}
-        <a class="a-link" href="{% url 'main:people_update' pk=people.pk %}"> Изменить </a>
-        <a class="a-link" href="{% url 'main:people_delete' pk=people.pk %}"> Удалить </a>  </li>
-    {% endfor %}
-    </ul>
-    <a class="a-link" href="{% url 'main:people_create_tocost' pk=cost.pk %}"> Добавить друга </a>
-</div>
+                        <div class="list-group">
+                            {% for people in peoples %}
+                            <div class="list-group-item py-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="person-avatar">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <span>{{people.name}}</span>
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'main:people_update' pk=people.pk %}" class="btn btn-outline-secondary btn-sm me-1">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'main:people_delete' pk=people.pk %}" class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Другие участники -->
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<div class="base-fixed blue-block">
-    <h2>Расчет</h2>
-    <ul>
-        {% for k,v in result.data.items %}
-        <li> {{k}}
-            {% for kk, vv in v.items %}
-            <b> {{kk}} - {{vv}} </b> </li>
-            {% endfor %}
+        <!-- Расчеты -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-calculator me-2"></i> <b> Кто </b> <span class="badge bg-primary calculation-badge"> кому - сколько</span> должен</h2>
+
+                <div class="row">
 
 
-        {% endfor %}
-    </ul>
-</div>
+{% for k,v in result.data.items %}
+                    <div class="col-md-6 mb-2">
+
+                        <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded">
+
+
+                            <span class=""> <b>{{k}}</b> </span>
+                            <div>
+                                {% for kk, vv in v.items %}<span class="badge bg-primary calculation-badge"> {{kk}} - {{vv}} ₽ </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                    {%endfor%}
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
 
 <div>
     <h2>Расчет</h2>
@@ -61,7 +148,4 @@
     </ul>
 
 </div>
-
-
 {% endblock %}
-
