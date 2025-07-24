@@ -1,14 +1,61 @@
-{% extends 'main/base.html' %}
-{% block title %}
-Удаление расхода
-{% endblock %}
+<div class="delete-confirmation-popup">
+  <div class="popup-content">
+    <h3>Подтверждение удаления</h3>
+    <p>Вы действительно хотите удалить расход "{{ object.name }}" на сумму {{object.price}}?</p>
 
-{% block body %}
-<h1>Уверены что хотите удалить?</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-<button type="submit"> Удалить</button>
-</form>
-{% endblock %}
+    <form method="post" id="deleteForm" action="{% url 'main:cost_detail_delete' object.pk %}">
+      {% csrf_token %}
+      <div class="popup-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeDeletePopup()">Отмена</button>
+        <button type="submit" class="btn btn-danger">Удалить</button>
+      </div>
+    </form>
+
+
+
+  </div>
+</div>
+
+<script>// Находим форму с id 'deleteForm' и добавляем обработчик события отправки формы
+document.getElementById('deleteForm').addEventListener('submit', function(e) {
+  // Предотвращаем стандартное поведение формы (перезагрузку страницы)
+  e.preventDefault();
+
+  // Отправляем AJAX-запрос на сервер
+  fetch(this.action, { // URL для отправки берется из атрибута action формы
+    method: 'POST', // Используем POST-метод
+    body: new FormData(this), // Формируем данные формы для отправки
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest', // Указываем, что это AJAX-запрос
+      'X-CSRFToken': '{{ csrf_token }}' // Добавляем CSRF-токен для защиты
+    }
+  })
+  // Обрабатываем ответ от сервера как JSON
+  .then(response => response.json())
+  // Работаем с полученными данными
+  .then(data => {
+    // Если сервер вернул success: true
+    if(data.success) {
+      // Перенаправляем пользователя по указанному URL
+      window.location.href = data.redirect_url;
+    }
+  })
+  // Обрабатываем возможные ошибки
+  .catch(error => console.error('Error:', error));
+});
+
+// Функция для закрытия popup-окна подтверждения удаления
+function closeDeletePopup() {
+  // Находим popup-окно по классу 'delete-confirmation-popup'
+  const popup = document.querySelector('.delete-confirmation-popup');
+  // Если popup существует
+  if (popup) {
+    // Удаляем popup из DOM
+    popup.remove();
+  }
+}
+</script>
+
+
+
 

@@ -3,11 +3,96 @@
 Создание расхода
 {% endblock %}
 
+{% block lib %}
+
+{% endblock %}
+
 {% block body %}
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-<button type="submit"> Создать</button>
-</form>
+<body class="bg-light">
+
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card expense-form-card">
+                    <div class="card-header form-header">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-plus-circle-fill text-primary fs-3 me-3"></i>
+                            <div>
+                                <h1 class="h4 mb-0">Создать расход</h1>
+                                <small class="text-muted">Заполните информацию о расходе</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <label class="form-label fw-bold">Название расхода</label>
+                                    {{ form.name }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label  class="form-label fw-bold">Сумма</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">₽</span>
+                                        {{ form.price }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label  class="form-label fw-bold">Кто оплатил</label>
+                                {{ form.people_cost }}
+                            </div>
+                            <!-- Участники в виде кнопок -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold d-block mb-3">Между кем делить расход</label>
+                                <div class="participants-container">
+                                    {% for choice in form.people_share.field.choices  %}
+
+                                        <label class="participant-btn active" >
+                                            <input  type="checkbox"
+                                                    name="{{ form.people_share.name}}"
+                                                    value="{{ choice.0 }}"
+                                                    id="id_{{ form.people_share.name }}_{{ forloop.counter0 }}"
+                                                    class="participant-checkbox" checked>
+                                            <span>{{ choice.1 }}</span>
+                                        </label>
+
+                                    {% endfor %}
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="d-flex justify-content-between pt-3">
+                                <a href="{% url 'main:cost_view' pk=form.pk%}" type="button" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i>На основную
+                                </a>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-check-lg me-1"></i>Создать расход
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+document.querySelectorAll('.participant-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const checkbox = this.querySelector('.participant-checkbox');
+                checkbox.checked = !checkbox.checked;
+                this.classList.toggle('active', checkbox.checked);
+
+            });
+        });
+</script>
+
+</body>
 {% endblock %}
 

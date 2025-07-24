@@ -1,5 +1,5 @@
 * {
-        font-family: 'Roboto', sans-serif;
+        font-family: 'Gabriela', sans-serif;
 
       }
 header {
@@ -48,11 +48,6 @@ footer{
     justify-content: space-around;
     align-items: center;
 }
-.a-link {
-    text-decoration: none;
-    color: black;
-    padding-left: 15px;
-}
 
 .btn-white {
     background-color:white;
@@ -98,34 +93,125 @@ footer{
     padding: 30px;
     border-radius: 5px;
 }
-
-
+.bg-orange{
+  --bs-bg-opacity: 1;
+  background-color: #FF6400 !important;
+}
+.fs-15{
+    font-size: 1.5rem !important;
+}
+.btn-change {
+    color: black;
+}
+.btn-delete {
+    color: red;
+}
  .expense-card {
             transition: transform 0.2s;
         }
-        .expense-card:hover {
-            transform: translateY(-2px);
+.expense-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    border-color: #c5c5c5;
+    background: linear-gradient(135deg, rgba(108, 195, 155, 0.1) 0%, rgba(255,255,255,0) 100%);
+    }
+
+.person-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    }
+.calculation-badge {
+    font-size: 0.9rem;
+}
+    @media (max-width: 768px) {
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
         }
-        .person-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
+        .section-header .btn {
+            margin-top: 10px;
+            width: 100%;
         }
-        .calculation-badge {
-            font-size: 0.9rem;
-        }
-        @media (max-width: 768px) {
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .section-header .btn {
-                margin-top: 10px;
-                width: 100%;
-            }
-        }
+    }
+
+/*for cost detail*/
+
+.expense-form-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: none;
+}
+.form-header {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    background-color: #f8f9fa;
+    border-radius: 10px 10px 0 0 !important;
+}
+.participant-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    margin: 0 8px 8px 0;
+    border-radius: 20px;
+    border: 2px solid #dee2e6;
+    background-color: white;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+.participant-btn:hover {
+    border-color: #adb5bd;
+}
+.participant-btn.active {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+}
+
+.participant-checkbox {
+    position: absolute;
+    opacity: 0;
+}
+@media (max-width: 768px) {
+    .expense-form-card {
+        border-radius: 0;
+    }
+    .participant-btn {
+        padding: 5px 10px;
+        margin: 0 5px 5px 0;
+    }
+}
+/* popup*/
+
+.delete-confirmation-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+
+.delete-confirmation-popup .popup-content {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.delete-confirmation-popup .popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}

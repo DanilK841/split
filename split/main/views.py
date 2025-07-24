@@ -1,28 +1,40 @@
+from itertools import count
+
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import CostDetail, Cost, People
 from .form import CostDetailForm, CostDetailFormCreate
+from django import forms
 
 from django.db.models import Count, Sum
 
 
 # Create your views here.
-class CostDetailView(DetailView):
-    template_name = 'main/costdetail.html'
-    model = CostDetail
-    queryset = CostDetail.objects
 
 class CostDetailCreateView(CreateView):
     model=CostDetail
     form_class = CostDetailFormCreate
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['name'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder' : "Например: Продукты, Кафе, Транспорт"
+        })
+        form.fields['price'].widget.attrs.update({
+            'class': 'form-control',
+        })
+        form.fields['people_cost'].widget.attrs.update({
+            'class': 'form-control'
+        })
+        return form
     def get_success_url(self):
         return reverse('main:cost_view', kwargs={'pk': self.kwargs.get('pk')})
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         # Получаем параметр из URL
         kwargs['pk'] = self.kwargs.get('pk')
-        print('contextcontextcontextcontext ',kwargs)
         return kwargs
     def form_valid(self, form):
         # Использование параметра при сохранении формы
@@ -33,6 +45,18 @@ class CostDetailUpdateView(UpdateView):
     model = CostDetail
     template_name_suffix = '_update_form'
     form_class = CostDetailForm
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['name'].widget.attrs.update({
+            'class': 'form-control',
+        })
+        form.fields['price'].widget.attrs.update({
+            'class': 'form-control',
+        })
+        form.fields['people_cost'].widget.attrs.update({
+            'class': 'form-control'
+        })
+        return form
     def get_success_url(self):
         return reverse('main:cost_view', kwargs={'pk': self.object.cost.pk})
 
@@ -47,15 +71,42 @@ class CostDetailUpdateView(UpdateView):
 
 class CostDetailDeleteView(DeleteView):
     model=CostDetail
-
+    template_name = 'main/costdetail_confirm_delete.html'
+    def get(self, request, *args, **kwargs):
+        # Для AJAX-запросов возвращаем только содержимое popup
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            self.object = self.get_object()
+            context = self.get_context_data()
+            return render(request, self.template_name, context)
+        # Для обычных запросов работаем как стандартный DeleteView
+        return super().get(request, *args, **kwargs)
     def get_success_url(self):
         return reverse('main:cost_view', kwargs={'pk': self.object.cost.pk})
-    # success_url = reverse_lazy('main:cost_view', kwargs={'pk':object.cost.pk})
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+
+        # Для AJAX-запросов возвращаем JSON
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            self.object.delete()
+            return JsonResponse({
+                'success': True,
+                'redirect_url': success_url
+            })
+
+        # Для обычных запросов работаем стандартно
+        return super().delete(request, *args, **kwargs)
 
 
 class PeopleCreateView(CreateView):
     model=People
-    fields = 'name', 'telegram'
+    fields = ('name',)
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['name'].widget.attrs.update({
+            'class': 'form-control',
+        })
+        return form
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['pk'] = self.kwargs.get('pk')
@@ -69,43 +120,61 @@ class PeopleCreateView(CreateView):
         form.instance.cost = get_object_or_404(Cost, pk=self.kwargs.get('pk'))
         return super().form_valid(form)
 
-class PeopleCreateToCostView(CreateView):
-    model=People
-    fields = 'name', 'telegram'
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['pk'] = self.kwargs.get('pk')
-        peoples = People.objects.filter(cost=context['pk'])
-        context['peoples'] = peoples
-        return context
-    def get_success_url(self):
-        return reverse('main:cost_view', kwargs={'pk': self.kwargs.get('pk')})
-    def form_valid(self, form):
-        # Использование параметра при сохранении формы
-        form.instance.cost = get_object_or_404(Cost, pk=self.kwargs.get('pk'))
-        return super().form_valid(form)
-
 class PeopleUpdateView(UpdateView):
     model = People
-    fields = ('name','telegram')
+    fields = ('name',)
     template_name_suffix = '_update_form'
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['name'].widget.attrs.update({
+            'class': 'form-control',
+        })
+        return form
     def get_success_url(self):
         return reverse('main:cost_view', kwargs={'pk': self.object.cost.pk})
 
 class PeopleDeleteView(DeleteView):
     model=People
+    template_name = 'main/people_confirm_delete.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pk'] = self.kwargs.get('pk')
 
+        exist_people_cost = CostDetail.objects.filter(people_cost=context['pk']).count()
+        exist_people_share = CostDetail.objects.prefetch_related('people_share').filter(people_share=context['pk']).count()
+        context['exist_people'] = exist_people_cost + exist_people_share
+        return context
+    def get(self, request, *args, **kwargs):
+        # Для AJAX-запросов возвращаем только содержимое popup
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            self.object = self.get_object()
+            context = self.get_context_data()
+            return render(request, self.template_name, context)
+        # Для обычных запросов работаем как стандартный DeleteView
+        return super().get(request, *args, **kwargs)
     def get_success_url(self):
         return reverse('main:cost_view', kwargs={'pk': self.object.cost.pk})
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+
+        # Для AJAX-запросов возвращаем JSON
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            self.object.delete()
+            return JsonResponse({
+                'success': True,
+                'redirect_url': success_url
+            })
+        # Для обычных запросов работаем стандартно
+        return super().delete(request, *args, **kwargs)
 
 class CostView(TemplateView):
     template_name = 'main/cost_detail.html'
     def evaluate_result(self, pk):
         cost_detail = CostDetail.objects.filter(cost=pk)
 
-        people_cost = (cost_detail
-        .values('people_cost__name')
-        .annotate(
+        sum_spent = (cost_detail
+        .aggregate(
             total_sum_spent=Sum('price')
         ))
 
@@ -120,10 +189,9 @@ class CostView(TemplateView):
                     join main_people mp1 on cd.people_cost_id = mp1.id
                     join main_people mp2 on cds.people_id = mp2.id
                     where cd.cost_id = %s''', [str(pk).replace('-','')])
-        print(f'where cd.cost_id = %s', [str(pk)])
+
         data = {}
         for r in res:
-            print('asjkdgakjgdhjkasgdjhagsdhj', r.name_cost)
             if r.name_cost != r.name_share:
                 if r.name_cost in data.keys() and r.name_share in data[r.name_cost].keys():
                     data[r.name_cost][r.name_share] += r.price_for_one
@@ -131,7 +199,7 @@ class CostView(TemplateView):
                     data[r.name_cost][r.name_share] = r.price_for_one
                 else:
                     data[r.name_cost]= {r.name_share:r.price_for_one}
-        print('datastart start start start', data)
+
         iter = 1
         while iter == 1:
             deldic = {}
@@ -151,12 +219,12 @@ class CostView(TemplateView):
             for k,v in deldic.items():
                 del data[k][v]
             deldic = {}
-            print(data)
+
             # todo add comment
             data_ = {}
             for costkey in data.keys():
                 for sharekey in data[costkey].keys():
-                    print(data)
+
                     if sharekey in data.keys() :
                         for sharekey2 in data[sharekey].keys():
                                 # iter = 1
@@ -195,12 +263,12 @@ class CostView(TemplateView):
             for k,v in deldic.items():
                 del data[k][v]
             deldic = {}
-            print('data_:', data_)
+
             for costkey in data_.keys():
                 for sharekey in data_[costkey].keys():
                     data[costkey][sharekey] = data_[costkey][sharekey]
             data_ = {}
-            print('data:', data)
+
 
         data_n = {}
         for costkey in data.keys():
@@ -209,8 +277,8 @@ class CostView(TemplateView):
                     data_n[sharekey][costkey] = data[costkey][sharekey]
                 else:
                     data_n[sharekey] = {costkey: data[costkey][sharekey]}
-        print(data_n)
-        return  {'people_cost':people_cost,
+
+        return  {'sum_spent':sum_spent,
                  'res':res,
                  'data':data_n,
                  }
@@ -226,6 +294,13 @@ class CostView(TemplateView):
 class CostCreateView(CreateView):
     model=Cost
     fields = ('name',)
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['name'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder' : "Например: День рождение"
+        })
+        return form
     def get_success_url(self):
         print('print args', self.kwargs)
         return reverse_lazy('main:people_create', kwargs={'pk': self.object.pk})

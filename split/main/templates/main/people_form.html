@@ -4,20 +4,62 @@
 {% endblock %}
 
 {% block body %}
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-<button type="submit"> Создать </button>
-</form>
 
-<div>
-    <h2> Список созданных людей </h2>
-    <ul>
-        {% for people in peoples %}
-        <li>{{people.name}}</li>
-        {% endfor %}
-    </ul>
-    <a class="a-link" href="{% url 'main:cost_detail_create' pk=pk %}"> К созданию расходов </a>
-    {% endblock %}
-</div>
+<body class="bg-light">
+
+<div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card expense-form-card">
+                    <div class="card-header form-header">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-plus-circle-fill text-primary fs-3 me-3"></i>
+                            <div>
+                                <h1 class="h4 mb-0">Список участников</h1>
+                                <small class="text-muted">Внесите всех участников</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <div class="mb-4">
+                                    <label class="form-label fw-bold">Опознавательный набор символов участника</label>
+                                    {{ form.name }}
+                            </div>
+                            <div class="d-flex justify-content-between pt-3">
+
+                                <a href="{% url 'main:cost_view' pk=pk%}" type="button" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i>Вернуться на основную
+                                </a>
+                                <button type="submit" class="btn btn-primary px-2">
+                                    <i class="bi bi-check-lg me-1"></i>Добавить участника
+                                </button>
+                                <a href="{% url 'main:cost_detail_create' pk=pk%}" type="button" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-right me-1"></i>К добавлению расхода
+                                </a>
+
+                            </div>
+
+                        </form>
+
+                        <div class="participants-container pt-3">
+                            <h3> Уже добавлены </h3>
+
+                                {% for people in peoples %}
+                                <span class="participant-btn active">{{people.name}}</span>
+                                {% endfor %}
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+{% endblock %}
 
