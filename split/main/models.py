@@ -11,6 +11,8 @@ class UUIDModel(models.Model):
 
 class Cost(UUIDModel):
     name = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_enter_date = models.DateTimeField(auto_now_add=True)
     # people = models.ManyToManyField(People, related_name='cost')
     # cost_detail = models.ManyToManyField(CostDetail, related_name='cost')
 

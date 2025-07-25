@@ -15,6 +15,8 @@ header > div{
 section{
     background-color:#f6f7f9;
 }
+
+
 footer{
     height: 300px;
     background-color:#f6f7f9;
@@ -48,35 +50,29 @@ footer{
     justify-content: space-around;
     align-items: center;
 }
-
-.btn-white {
+.mg-20{
+  margin-bottom: 20px;
+}
+.a-link{
+  text-decoration: none;
+}
+.btn-white{
     background-color:white;
-    border:solid 1px black;
-    border-radius: 5px;
+}
+.btn-blue{
+    background-color:rgb(13, 110, 253);
+}
+.btn-main {
+    border-radius: 55px;
     margin:5px;
-    min-height: 2em;}
+    min-height: 2em;
+    padding: 8px;
+    width:80%;
+    display:flex;
+    justify-content: center;
+    font-weight: 700;
+  }
 
-.btn-white:hover {
-    background-color:#525c707a;
-    border:solid 1px black;
-    border-radius: 5px;
-    margin:5px;
-}
-.blue-block{
-    background-color: #3f2aff;
-    height: 400px;
-}
-.blue-block h2{
-    width: 50%;
-    font-weight: 900;
-    padding-top: 30px;
-    color: white;
-}
-.blue-block p{
-    width:50%;
-    color: white;
-    font-size: small;
-}
 .popup-container{
     background-color: #00000085;
     position: fixed;
@@ -97,6 +93,9 @@ footer{
   --bs-bg-opacity: 1;
   background-color: #FF6400 !important;
 }
+.fw-800{
+  font-weight: 800;
+}
 .fs-15{
     font-size: 1.5rem !important;
 }
@@ -106,9 +105,19 @@ footer{
 .btn-delete {
     color: red;
 }
- .expense-card {
-            transition: transform 0.2s;
-        }
+
+.card-body-hero {
+  flex: 1 1 auto;
+  padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
+  color: var(--bs-card-color);
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  border-radius: 0 0 20px 20px;
+}
+
+.expense-card {
+          transition: transform 0.2s;
+      }
 .expense-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0,0,0,0.12);
@@ -214,4 +223,50 @@ footer{
   justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
+}
+
+.absolute {
+  position: absolute;
+}
+.flex {
+  display: flex;
+}
+.justify-center {
+  justify-content: center;
+}
+.items-center {
+  align-items: center;
+}
+.bg-blue-color {
+  --tw-bg-opacity: 1;
+  background-color: rgb(13, 110, 253);
+}
+.rounded-full {
+  border-radius: 9999px;
+}
+.relative {
+  position: relative;
+}
+.left-3 {
+  left: -.75rem;
+  width: 2rem;
+  height: 2rem;
+}
+.top-3 {
+  top: -.75rem;
+}
+
+.faq-h{
+  display: flex;
+  justify-content: center;
+  color: rgb(13, 110, 253);
+  font-weight: 600;
+}
+.faq-img{
+  max-width: 100%;
+  display:flex;
+  justify-content: center;
+}
+.faq-width{
+  width: 100%;
 }

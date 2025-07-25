@@ -1,0 +1,75 @@
+{% extends 'main/base.html' %}
+{% block title %}
+Разделение трат в групповых поездках
+{% endblock %}
+
+{% block body %}
+{% load static %}
+<body class="bg-light">
+    <div class="container py-4">
+        <!-- Шапка -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body-hero" >
+                <div class="d-flex justify-content-center align-items-center flex-column">
+
+                    <div>
+                        <h1 class="mb-3 mb-md-0 fw-800"> ПоделиРасходы </h1>
+                    </div>
+                    <div class="px-2 mg-20">
+                        Избавь себя от подсчетов в гугл таблицах. БЕСПЛАТНО и БЕЗ РЕГИСТРАЦИИ
+                    </div>
+
+                    <a href="{% url 'main:cost_create'%}" type="button" class="a-link btn-main btn-white px-2">
+                                    <i class="bi bi-arrow-right me-1"></i>Перейти к созданию
+                    </a>
+                    <img src="{% static 'uploads/img/icons/1.png' %}" >
+                </div>
+
+
+
+            </div>
+        </div>
+
+        <!-- Расчеты -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="mb-3">Краткое руководство пользования</h2>
+
+                    <div class="d-flex justify-content-between align-items-center flex-column">
+                        <div class="bg-light rounded fs-15 p-2 relative mg-20 faq-width">
+                            <div class="absolute left-3 top-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-color font-bold text-white">
+                                1
+                            </div> <span class="faq-h"> Вводим название группы расходов </span>
+                            <span class="faq-img"> <img src="{% static 'uploads/img/faq/create_group_1.png' %}" ></span>
+                        </div>
+                        <div class="bg-light rounded fs-15 p-2 relative mg-20 faq-width">
+                            <div class="absolute left-3 top-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-color font-bold text-white">
+                                2
+                            </div> <span class="faq-h"> Добавляем имена участников</span>
+                            <span class="faq-img"> <img src="{% static 'uploads/img/faq/create_member_2.png' %}" ></span>
+                        </div>
+                        <div class="bg-light rounded fs-15 p-2 relative mg-20 faq-width">
+                            <div class="absolute left-3 top-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-color font-bold text-white">
+                                3
+                            </div> <span class="faq-h"> Вводим инфромацию по расходам</span>
+                            <span class="faq-img"> <img class="faq-img" src="{% static 'uploads/img/faq/enter_expense_3.png' %}" > </span>
+                        </div>
+                        <div class="bg-light rounded fs-15 p-2 relative mg-20 faq-width">
+                            <div class="absolute left-3 top-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-color font-bold text-white">
+                                4
+                            </div> <span class="faq-h"> Смотрим на результат, отправляем ссылку, чтобы все могли посмотреть</span>
+                            <span class="faq-img"> <img class="faq-img" src="{% static 'uploads/img/faq/result_4.png' %}" ></span>
+                        </div>
+                        <div class="p-2 d-flex justify-content-center faq-width">
+                            <a href="{% url 'main:cost_create'%}" type="button" class="a-link btn-main btn-blue px-2 text-white">
+                                    <i class="bi bi-arrow-right me-1"></i>Перейти к созданию
+                    </a>
+                        </div>
+                    </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+{% endblock %}

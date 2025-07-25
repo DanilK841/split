@@ -9,6 +9,7 @@ app_name = 'main'
 
 register_converter(HyphenlessUUIDConverter, 'hyphenless_uuid')
 urlpatterns = [
+
     path("update-cost-detail/<uuid:pk>", CostDetailUpdateView.as_view(), name='update_cost_detail'),
     path("detail/<uuid:pk>/delete",CostDetailDeleteView.as_view(), name='cost_detail_delete'),
     path("<uuid:pk>/detail-create",CostDetailCreateView.as_view(), name='cost_detail_create'),
