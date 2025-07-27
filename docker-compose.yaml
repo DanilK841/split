@@ -21,5 +21,4 @@ services:
         max-size: "200k"
     volumes:
       - ./split/split/database:/split/database
-      - static_volume:/var/www/static
-      - media_volume:/var/www/media
+
