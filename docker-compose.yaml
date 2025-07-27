@@ -1,0 +1,23 @@
+version: "2.34.0"
+
+services:
+  app:
+    build:
+      dockerfile: ./Dockerfile
+    command:
+      - gunicorn
+      - split.wsgi:application
+      - --bind
+      - "0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    restart: always
+    env_file:
+      - .env
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "10"
+        max-size: "200k"
+    volumes:
+      - ./split/split/database:/split/database
