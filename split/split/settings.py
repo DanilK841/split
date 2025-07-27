@@ -25,12 +25,13 @@ DATABASE_DIR.mkdir(exist_ok=True)
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-qz!vtd4*wyri3a==s1(az#19)=)_wb^+3hb$0f%nd!*qs51(lk')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DJANGO_DEBUG","0") == "1"
 
-ALLOWED_HOSTS = [] + os.getenv("DJANGO_ALLOWED_HOSTS","").split(",")
+print("DJANGO_ALLOWED_HOSTS: ",os.getenv("DJANGO_ALLOWED_HOSTS"))
+ALLOWED_HOSTS = ['127.0.0.1'] + os.getenv("DJANGO_ALLOWED_HOSTS","").split(",")
 
 
 # Application definition
@@ -126,6 +127,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
+    "var/www/static",
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 

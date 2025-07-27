@@ -9,4 +9,7 @@ RUN pip install -r req.txt
 
 COPY split .
 
-CMD ["gunicorn", "split.wsgi.py:application", "--bind", "0.0.0.0:8000" ]
+# Collect static files
+RUN python manage.py collectstatic --noinput
+
+CMD ["gunicorn", "split.wsgi.py:application", "--bind", "127.0.0.1:8000" ]

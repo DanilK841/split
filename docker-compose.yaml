@@ -1,4 +1,3 @@
-version: "2.34.0"
 
 services:
   app:
@@ -8,7 +7,8 @@ services:
       - gunicorn
       - split.wsgi:application
       - --bind
-      - "0.0.0.0:8000"
+      - "127.0.0.1:8000"
+
     ports:
       - "8000:8000"
     restart: always
@@ -21,4 +21,5 @@ services:
         max-size: "200k"
     volumes:
       - ./split/split/database:/split/database
-      - ./split/main/static:/split/static
+      - static_volume:/var/www/static
+      - media_volume:/var/www/media
