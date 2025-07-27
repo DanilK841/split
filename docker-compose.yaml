@@ -8,7 +8,6 @@ services:
       - split.wsgi:application
       - --bind
       - "0.0.0.0:8000"
-
     ports:
       - "8000:8000"
     restart: always
@@ -21,5 +20,6 @@ services:
         max-size: "200k"
     volumes:
       - ./split/split/database:/split/database
-      - ./split/split/staticfiles:/split/split/main/static
+      - ./split/split/static:/split/main/static
+      - ./split/split/staticfiles:/split/staticfiles
 
