@@ -1,0 +1,18 @@
+with d as (SELECT cd.id,
+mp1.name as name_cost, 
+mp2.name as name_share,
+count(cd.id) over (partition by cd.id) as wind_,
+cd.price,
+cd.price / count(cd.id) over (partition by cd.id) as price_for_one
+from main_costdetail cd
+left join main_costdetail_people_share cds on cd.id = cds.costdetail_id
+join main_people mp1 on cd.people_cost_id = mp1.id
+join main_people mp2 on cds.people_id = mp2.id
+where cd.cost_id = 3)
+select d.name_cost,
+d.name_share,
+sum(d.price_for_one) as price_for_one
+from d
+where d.name_cost <> d.name_share
+group by d.name_cost,
+d.name_share
