@@ -9,8 +9,6 @@ services:
       - --bind
       - "127.0.0.1:8000"
 
-    ports:
-      - "8000:8000"
     restart: always
     env_file:
       - .env
