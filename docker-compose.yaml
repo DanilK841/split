@@ -20,6 +20,6 @@ services:
         max-size: "200k"
     volumes:
       - ./split/split/database:/split/database
-      - ./split/split/static:/split/main/static
+      - ./split/main/static:/split/main/static
       - ./split/split/staticfiles:/split/staticfiles
 
