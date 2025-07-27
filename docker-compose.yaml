@@ -7,7 +7,7 @@ services:
       - gunicorn
       - split.wsgi:application
       - --bind
-      - "127.0.0.1:8000"
+      - "0.0.0.0:8000"
 
     ports:
       - "8000:8000"
@@ -21,4 +21,5 @@ services:
         max-size: "200k"
     volumes:
       - ./split/split/database:/split/database
+      - ./split/split/staticfiles:/main/static
 
