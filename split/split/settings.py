@@ -164,3 +164,7 @@ logging.config.dictConfig({
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
+
+# Разрешите домены Яндекс.Метрики
+CSP_DEFAULT_SRC = ("'self'", "mc.yandex.ru", "yastatic.net")
+CSP_SCRIPT_SRC = ("'self'", "mc.yandex.ru", "yastatic.net")
